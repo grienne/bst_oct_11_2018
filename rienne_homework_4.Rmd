@@ -69,6 +69,9 @@ exp(confint(q2_lr))
 
 #(c) Verify the Hosmer-Lemeshow test statistic as presented in Table 7.10.
 
+    #How to do this test?
+    
+    
 #(d) Replicate the plot in Figure 7.5.
 #Counts
 
@@ -80,9 +83,16 @@ dat_gp_2 <- dat %>%
 dat_fin <- dat_gp_2 %>%
   group_by(wais)%>%
     mutate(prop = n / sum(n))
+
+p <- ggplot(data = dat_fin, aes(x=wais, y=prop))
+p + geom_point() 
+      #How do I add the curvilinear line?
+
+
 #(e) What do the results in (b) and (d) suggest regarding inference, i.e., what do you conclude? Use verbiage
 #specific to the dataset used.
 
+    #The probability of senility increases with increasing WAIS score.....(finish after assistance)
 
 
 
