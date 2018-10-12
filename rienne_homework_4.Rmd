@@ -14,6 +14,7 @@ library(readxl)
 library(ggplot2)
 library(dplyr)
 library(MASS)
+library(ResourceSelection)
 
 dat <- read_excel("oct_11_2018_h4_table_7_18.xlsx")
 names(dat) <- c('wais', 'symptom')
@@ -69,8 +70,8 @@ exp(confint(q2_lr))
 
 #(c) Verify the Hosmer-Lemeshow test statistic as presented in Table 7.10.
 
-    #How to do this test?
-    
+q2_hl <- hoslem.test(dat_fin$symptom,dat_fin$wais,  g=10)
+q2_hl    
     
 #(d) Replicate the plot in Figure 7.5.
 #Counts
