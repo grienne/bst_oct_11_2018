@@ -16,6 +16,7 @@ library(dplyr)
 library(MASS)
 
 dat <- read_excel("oct_11_2018_h4_table_7_18.xlsx")
+names(dat) <- c('wais', 'symptom')
 
 ```
 
@@ -47,13 +48,10 @@ B. Consider J 2 × 2 tables like Table 7.13, one for each level xj of a factor, 
 ```
 
 ```{r Question 2}
-
-exp(0)
-
 #This problem models section 7.8 in our text. Use the WAIS dataset (Table 7.8) and conduct logisitic regression
 #of symptoms present on score. Show all your work, ideally, through embedded code and interpreted results.
 
-q2_lr <- glm(symptom ~ person, data = dat, family = binomial(link = "logit"))
+q2_lr <- glm(symptom ~ wais, data = dat, family = binomial(link = "logit"))
 summary(q2_lr)
 exp(confint(q2_lr))
 
@@ -72,7 +70,16 @@ exp(confint(q2_lr))
 #(c) Verify the Hosmer-Lemeshow test statistic as presented in Table 7.10.
 
 #(d) Replicate the plot in Figure 7.5.
+#Counts
 
+dat_gp_2 <- dat %>%
+    group_by(symptom, wais)  %>%
+     summarise(n= n())
+
+#Proportions
+dat_fin <- dat_gp_2 %>%
+  group_by(wais)%>%
+    mutate(prop = n / sum(n))
 #(e) What do the results in (b) and (d) suggest regarding inference, i.e., what do you conclude? Use verbiage
 #specific to the dataset used.
 
