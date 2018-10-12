@@ -23,19 +23,32 @@ dat <- read_excel("oct_11_2018_h4_table_7_18.xlsx")
 
 Question 1
 
-A. For the simple logistic model πi = eβi/(1 + eβi), show that if there is no diﬀerence between the exposed 
-    and not exposed groups (i.e., β1 = β2), then φ = 
-  
-  
+A. For the simple logistic model πi = eβi/(1 + eβi), show that if there is no diﬀerence between the exposed (b1)
+    and not exposed groups (b2) (i.e., β1 = β2), then φ = 1
+      
+        Set β1 - β2 = 1 = φ
+    
+          Set φ = 1 = [ π1/ (1 − π2) ] / [ π2 (1 − π1) ] =>
+                  [eβ1/(1 + eβ1) /  [1 - eβ2/(1 + eβ2) ]       /        [eβ2/(1 + eβ2) /  [1 - eβ1/(1 + eβ1) ] =>
+                   1 = { [eβ1/(1 + eβ1) * [1 - eβ2/(1 + eβ2) ]^-1       /        [eβ2/(1 + eβ2) * [1 - eβ1/(1 + eβ1) ] ^ -1 } =>
+                      [eβ1/(1 + eβ1) * [1 - eβ2/(1 + eβ2) ]^-1 = -[eβ2/(1 + eβ2) * [1 - eβ1/(1 + eβ1) ] ^ -1 => Log & Algebra
+                        Log eβ2/(1 + eβ1) = Log eβ1/(1 + eβ2) => exp
+                          exp(β2)/ exp(β1) = exp (β1) / ex(β2) = 1 tf β1 - β2 = 0 => exp (β1 - β2) = 1
+                            φ = exp(β1 - β2) = 1 if and only if β1 = β2
+            
+      
 B. Consider J 2 × 2 tables like Table 7.13, one for each level xj of a factor, such as age group, with j = 1,...,J. 
     For the logistic model
       πij = exp(αi + βixj) / 1 + exp(αi + βixj), i = 1,2, j = 1,...,J.
         Show that log φ is constant over all tables if β1 = β2   
 
+           φ = O1/ O2 = π1(1−π2) / π2(1−π1)
         
 ```
 
 ```{r Question 2}
+
+exp(0)
 
 #This problem models section 7.8 in our text. Use the WAIS dataset (Table 7.8) and conduct logisitic regression
 #of symptoms present on score. Show all your work, ideally, through embedded code and interpreted results.
