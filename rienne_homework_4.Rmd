@@ -85,10 +85,8 @@ dat_fin <- dat_gp_2 %>%
     mutate(prop = n / sum(n))
 
 p <- ggplot(data = dat_fin, aes(x=wais, y=prop))
-p + geom_point() 
-      #How do I add the curvilinear line?
-
-
+p + geom_point() + geom_smooth(method = "glm", family = binomial(link = 'logit'), se= FALSE)
+    
 #(e) What do the results in (b) and (d) suggest regarding inference, i.e., what do you conclude? Use verbiage
 #specific to the dataset used.
 
