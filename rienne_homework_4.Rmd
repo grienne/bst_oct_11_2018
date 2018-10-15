@@ -102,15 +102,18 @@ dat_gp_2 <- dat %>%
 #Proportions
 dat_fin <- dat_gp_2 %>%
   group_by(wais)%>%
-    mutate(prop = n / sum(n))
+    mutate(proportions = n / sum(n))
 
-p <- ggplot(data = dat_fin, aes(x=wais, y=prop))
+
+write.csv(dat_fin, file = "bst_oct11.csv")
+
+p <- ggplot(data = dat_fin, aes(x=wais, y=proportions))
 p + geom_point() + geom_smooth(method = "glm", family = binomial(link = 'logit'), se= FALSE)
     
 #(e) What do the results in (b) and (d) suggest regarding inference, i.e., what do you conclude? Use verbiage
 #specific to the dataset used.
 
-    #The probability of senility increases with increasing WAIS score.....(finish after assistance)
+    #The probability of senility increases with decreases with increased WAIS score.....(finish after assistance)
 
 
 
