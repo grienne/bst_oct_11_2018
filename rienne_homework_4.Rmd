@@ -13,10 +13,12 @@ knitr::opts_chunk$set(echo = TRUE)
 library(readxl)
 library(ggplot2)
 library(dplyr)
-library(MASS)
 library(ResourceSelection)
 
 dat <- read_excel("oct_11_2018_h4_table_7_18.xlsx")
+
+dat_try <- read_excel("dat_comp.xlsx")
+
 names(dat) <- c('wais', 'symptom')
 
 ```
@@ -74,11 +76,44 @@ B. Consider J 2 × 2 tables like Table 7.13, one for each level xj of a factor, 
 q2_lr <- glm(symptom ~ wais, data = dat, family = binomial(link = "logit"))
 summary(q2_lr)
 exp(confint(q2_lr))
+dat$fit_prop   <- fitted(q2_lr)
+
+#(d) Replicate the plot in Figure 7.5.
+
+#Counts by Symptom
+dat_gp_2 <- dat %>%
+    group_by(symptom, wais, fit_prop)  %>%
+     summarise(counts= n())
+
+#Counts by grp
+dat_fin <- dat_gp_2 %>%
+  group_by(wais) %>%
+    mutate(n = sum(counts))
+
+dat_comp <- dat_fin %>% 
+               group_by(wais)%>% 
+                  mutate(prp_count = counts / n)
+
+write.csv(dat_comp, "dat_comp.csv")
+
+
+detach("package:MASS", unload=TRUE)
+
+#dat_fin_2 <- dat_comp %>%
+ #             filter(symptom == "0") %>%
+  #               select(wais, fit_prop, counts,n, prp_count)
+
+#dat_fin_3 <- dat_comp %>%
+ #             mutate(yes = n - counts) %>%
+  #                filter(symptom == "0") %>%
+   #                 select(wais, fit_prop, counts, yes, prp_count)
+            
+#names(dat_fin_3) <- c("WAIS", "fitted_prop", "no", "yes", "proportions")
 
 #(a) Confirm the first 4 columns of Table 7.9. NB: the definition of “success” appears to have flip-flopped. Plan
 #accordingly.
 
-    dat[1:4,]
+dat_try[1:4,]
 
 
 #(b) Confirm the estimation of the βˆ’s and corresponding standard errors by extracting from your logistic regression
@@ -89,31 +124,25 @@ exp(confint(q2_lr))
 
 #(c) Verify the Hosmer-Lemeshow test statistic as presented in Table 7.10.
 
-q2_hl <- hoslem.test(dat_fin$symptom,dat_fin$wais,  g=10)
+require(MASS)
+q2_hl <- hoslem.test(dat_try$fit_prop, dat_try$y, g=10)
 q2_hl    
     
 #(d) Replicate the plot in Figure 7.5.
-#Counts
-
-dat_gp_2 <- dat %>%
-    group_by(symptom, wais)  %>%
-     summarise(n= n())
-
-#Proportions
-dat_fin <- dat_gp_2 %>%
-  group_by(wais)%>%
-    mutate(proportions = n / sum(n))
 
 
-write.csv(dat_fin, file = "bst_oct11.csv")
-
-p <- ggplot(data = dat_fin, aes(x=wais, y=proportions))
+p <- ggplot(data = dat_try, aes(x=wais, y=fit_prop))
 p + geom_point() + geom_smooth(method = "glm", family = binomial(link = 'logit'), se= FALSE)
+
+p2 <- ggplot(data = dat_try, aes(x=y, y=prp_count))
+p2 + geom_point() + geom_smooth(method = "glm", family = binomial(link = 'logit'), se= FALSE)
+
+
     
 #(e) What do the results in (b) and (d) suggest regarding inference, i.e., what do you conclude? Use verbiage
 #specific to the dataset used.
 
-    #The probability of senility increases with decreases with increased WAIS score.....(finish after assistance)
+    #The probability of senility increases with decreases with increased WAIS score.
 
 
 
