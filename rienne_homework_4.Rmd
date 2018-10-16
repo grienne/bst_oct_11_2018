@@ -132,7 +132,7 @@ q2_hl
 
 
 p <- ggplot(data = dat_try, aes(x=wais, y=fit_prop))
-p + geom_point() + geom_smooth(method = "glm", family = binomial(link = 'logit'), se= FALSE)
+p + geom_point() + geom_smooth(method = "glm", se = FALSE)
 
     
 #(e) What do the results in (b) and (d) suggest regarding inference, i.e., what do you conclude? Use verbiage
