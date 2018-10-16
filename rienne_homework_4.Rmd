@@ -51,14 +51,6 @@ A. For the simple logistic model πi = eβi/(1 + eβi), show that if there is no
                               Log
                                 β1 = β2 if and only if β1 = β2
                           
-                          
-                  #[eβ1/(1 + eβ1) /  [1 - eβ2/(1 + eβ2) ]       /        [eβ2/(1 + eβ2) /  [1 - eβ1/(1 + eβ1) ] =>
-                   #1 = { [eβ1/(1 + eβ1) * [1 - eβ2/(1 + eβ2) ]^-1       /        [eβ2/(1 + eβ2) * [1 - eβ1/(1 + eβ1) ] ^ -1 } =>
-                    #  [eβ1/(1 + eβ1) * [1 - eβ2/(1 + eβ2) ]^-1 = -[eβ2/(1 + eβ2) * [1 - eβ1/(1 + eβ1) ] ^ -1 => Log & Algebra
-                     #   Log eβ2/(1 + eβ1) = Log eβ1/(1 + eβ2) => exp
-                      #    exp(β2)/ exp(β1) = exp (β1) / ex(β2) = 1 tf β1 - β2 = 0 => exp (β1 - β2) = 1
-                       #     φ = exp(β1 - β2) = 1 if and only if β1 = β2
-            
       
 B. Consider J 2 × 2 tables like Table 7.13, one for each level xj of a factor, such as age group, with j = 1,...,J. 
     For the logistic model
@@ -68,86 +60,49 @@ B. Consider J 2 × 2 tables like Table 7.13, one for each level xj of a factor, 
               if φ = exp(π1 - π2)
                 then   log φ = (alpha1 - alpha2) + xj(β1 - β2) if β1 = β2
         
-                    φ = O1/ O2 = π1(1−π2) / π2(1−π1)
+                
         
 ```
 
 ```{r Question 2}
-#This problem models section 7.8 in our text. Use the WAIS dataset (Table 7.8) and conduct logisitic regression
-#of symptoms present on score. Show all your work, ideally, through embedded code and interpreted results.
+#Problem 2
 
-q2_lr <- glm(symptom ~ wais, data = dat, family = binomial(link = "logit"))
-summary(q2_lr)
-exp(confint(q2_lr))
-dat$fit_prop   <- fitted(q2_lr)
+#(a)Confirm the first 4 columns of Table 7.9.
+ 
+count<-aggregate( data=dat,symptom~wais,length)
+count2<-aggregate( data=dat,symptom~wais,sum)
+names(count) <- c("wais", "total_symp_count")
+tbl <- merge(count, count2, by ='wais', all = T)
+tbl$no_symp<- (tbl$total_symp_count - tbl$symptom)
+names(tbl) <- c("wais", "total_symp_count", "yes_symp", "no_symp", "no_symp_remove") 
+ 
+#calculate prop
+tbl$prop<- (tbl$yes_symp/tbl$total_symp_count)
+ 
+#(b)Confirm the estimation of the B's and corresponding standard errors
+p2_fit=glm(prop~wais, data=tbl,family=binomial(link="logit"))
+summary(p2_fit)
+coef(p2_fit)
+ 
+#(c)Verify the Hosmer-Lemeshow test statistic
+###Gyeon Review 
+hl <- hoslem.test(tbl$total_symp_count, fitted(p2_fit), g=10)
+hl
+ 
+h2 <- hoslem.test(p2_fit$y, fitted(p2_fit), g=10)
+h2
+
+#(d)Replicate the plot in Figure 7.5.
 
 #(d) Replicate the plot in Figure 7.5.
 
-#Counts by Symptom
-dat_gp_2 <- dat %>%
-    group_by(symptom, wais, fit_prop)  %>%
-     summarise(counts= n())
+p <- ggplot(data = tbl, aes(x=wais, y=prop))
+p + geom_point() + geom_smooth(method = "glm", se = FALSE) 
 
-#Counts by grp
-dat_fin <- dat_gp_2 %>%
-  group_by(wais) %>%
-    mutate(n = sum(counts))
-
-dat_comp <- dat_fin %>% 
-               group_by(wais)%>% 
-                  mutate(prp_count = counts / n)
-
-write.csv(dat_comp, "dat_comp.csv")
-
-
-detach("package:MASS", unload=TRUE)
-
-#dat_fin_2 <- dat_comp %>%
- #             filter(symptom == "0") %>%
-  #               select(wais, fit_prop, counts,n, prp_count)
-
-#dat_fin_3 <- dat_comp %>%
- #             mutate(yes = n - counts) %>%
-  #                filter(symptom == "0") %>%
-   #                 select(wais, fit_prop, counts, yes, prp_count)
-            
-#names(dat_fin_3) <- c("WAIS", "fitted_prop", "no", "yes", "proportions")
-
-#(a) Confirm the first 4 columns of Table 7.9. NB: the definition of “success” appears to have flip-flopped. Plan
-#accordingly.
-
-dat_try[1:4,]
-
-
-#(b) Confirm the estimation of the βˆ’s and corresponding standard errors by extracting from your logistic regression
-#results or explicitly calculating.
-
-    coef(q2_lr)
-    summary(q2_lr)$coefficients[, 2]
-
-#(c) Verify the Hosmer-Lemeshow test statistic as presented in Table 7.10.
-
-require(MASS)
-q2_hl <- hoslem.test(fitted(q2_lr), dat$symptom, g=10)
-q2_hl    
-    
-#(d) Replicate the plot in Figure 7.5.
-
-
-p <- ggplot(data = dat_try, aes(x=wais, y=fit_prop))
-p + geom_point() + geom_smooth(method = "glm", se = FALSE)
-
-    
-#(e) What do the results in (b) and (d) suggest regarding inference, i.e., what do you conclude? Use verbiage
-#specific to the dataset used.
-
-    #The probability of senility decreases with increased WAIS score.
-
-
+#(e)
+  #With increasing WAIS scores, chances of senility are reduced. 
 
 ```
-
-
 
 
 ```{ Question 3}
