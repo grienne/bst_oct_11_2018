@@ -65,7 +65,10 @@ B. Consider J 2 × 2 tables like Table 7.13, one for each level xj of a factor, 
       πij = exp(αi + βixj) / 1 + exp(αi + βixj), i = 1,2, j = 1,...,J.
         Show that log φ is constant over all tables if β1 = β2   
 
-           φ = O1/ O2 = π1(1−π2) / π2(1−π1)
+              if φ = exp(π1 - π2)
+                then   log φ = (alpha1 - alpha2) + xj(β1 - β2) if β1 = β2
+        
+                    φ = O1/ O2 = π1(1−π2) / π2(1−π1)
         
 ```
 
