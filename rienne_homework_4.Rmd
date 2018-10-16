@@ -125,7 +125,7 @@ dat_try[1:4,]
 #(c) Verify the Hosmer-Lemeshow test statistic as presented in Table 7.10.
 
 require(MASS)
-q2_hl <- hoslem.test(dat_try$fit_prop, dat_try$y, g=10)
+q2_hl <- hoslem.test(fitted(q2_lr), dat$symptom, g=10)
 q2_hl    
     
 #(d) Replicate the plot in Figure 7.5.
